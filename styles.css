@@ -8,3 +8,29 @@ button {
   height: 150px;
   width: 150px;
 }
+
+.introContainer {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.startBtn {
+  height: 30px;
+  width: 90px;
+  margin-left: 25px;
+}
+
+.container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.replayDiv {
+  margin-top: 12px;
+  font-size: 20px;
+  font-weight: "bold";
+}
