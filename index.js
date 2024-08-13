@@ -11,17 +11,21 @@ function GameBoard() {
   }
 
   const getRowsAndColumns = () => {
-    rows, columns;
+    return {
+      rows,
+      columns,
+    };
   };
   const getBoard = () => board;
 
   const markToken = (row, column, player) => {
+    console.log("inside mark token", board, row, column, player);
     if (board[row][column].getValue() !== "") {
       alert("Please select an empty box!");
     } else {
-      console.log({ row, column, player });
+      // console.log({ row, column, player });
       board[row][column].addToken(player);
-      console.log(board[row][column].getValue());
+      // console.log(board[row][column].getValue());
     }
   };
 
@@ -44,7 +48,7 @@ function Cell() {
   let value = "";
 
   const addToken = (player) => {
-    console.log({ player });
+    // console.log({ player });
     value = player;
   };
 
@@ -59,6 +63,8 @@ function Cell() {
 function GameController(playerOneName = "Ram", playerTwoName = "Sita") {
   const board = GameBoard();
   const { rows, columns } = board.getRowsAndColumns();
+  const boardArr = board.getBoard();
+  console.log("hmmm", boardArr, board.getBoard());
 
   const players = [
     {
@@ -74,7 +80,7 @@ function GameController(playerOneName = "Ram", playerTwoName = "Sita") {
   let activePlayer = players[0];
 
   const switchPlayerTurn = () => {
-    activePlayer === players[0] ? players[1] : players[0];
+    activePlayer = activePlayer === players[0] ? players[1] : players[0];
   };
 
   const getActivePlayer = () => activePlayer;
@@ -82,78 +88,141 @@ function GameController(playerOneName = "Ram", playerTwoName = "Sita") {
   //   Update the board after player's input
   const printNewRound = () => {
     board.printBoard();
-    console.log(`${getActivePlayer()?.name}'s Turn!`);
+    // console.log(`${getActivePlayer()?.name}'s Turn!`);
   };
 
   const playRound = (row, column) => {
     console.log(`Marking into ${row} ${column}`);
     board.markToken(row, column, getActivePlayer().token);
 
+    // const checkResult = () => {
+    //   // for checking rows
+    //   for (let i = 0; i < rows; i++) {
+    //     const firstToken = boardArr.getValue();
+    //     const secondToken = boardArr[i][1];
+    //     const thirdToken = boardArr[i][2];
+    //     console.log(
+    //       "checking by row!",
+    //       boardArr,
+    //       firstToken,
+    //       secondToken,
+    //       thirdToken
+    //     );
+    //     if (
+    //       firstToken != "" &&
+    //       firstToken === secondToken &&
+    //       secondToken === thirdToken
+    //     ) {
+    //       console.log("Win by row!");
+    //     }
+    //   }
+
+    //   // for checking columns
+    //   for (let j = 0; j < columns; j++) {
+    //     const firstToken = boardArr[0][j];
+    //     const secondToken = boardArr[1][j];
+    //     const thirdToken = boardArr[2][j];
+    //     if (
+    //       firstToken != "" &&
+    //       firstToken === secondToken &&
+    //       secondToken === thirdToken
+    //     ) {
+    //       console.log("Win by column!");
+    //     }
+    //   }
+
+    //   // for checking top-left to bottom-right diagonal (DLR - Diagonal Left to Right)
+    //   const firstTokenDLR = boardArr[0][0];
+    //   const secondTokenDLR = boardArr[1][1];
+    //   const thirdTokenDLR = boardArr[2][2];
+    //   if (
+    //     firstTokenDLR != "" &&
+    //     firstTokenDLR === secondTokenDLR &&
+    //     secondTokenDLR === thirdTokenDLR
+    //   ) {
+    //     console.log("Win by diagonal Top Left to Bottom Right!");
+    //   }
+
+    //   // for checking top-left to bottom-right diagonal (RLD -  Right to Left Diagonal)
+    //   const firstTokenRLD = boardArr[0][2];
+    //   const secondTokenRLD = boardArr[1][1];
+    //   const thirdTokenRLD = boardArr[2][0];
+    //   if (
+    //     firstTokenRLD != "" &&
+    //     firstTokenRLD === secondTokenRLD &&
+    //     secondTokenRLD === thirdTokenRLD
+    //   ) {
+    //     console.log("Win by diagonal Top Right to Bottom Left!");
+    //   }
+    // };
+
     const checkResult = () => {
+      // Get the values from the board
+      let boardValues = [];
+      boardArr.forEach((row, rowIndex) => {
+        boardValues[rowIndex] = [];
+        row.forEach((cell, cellIndex) => {
+          boardValues[rowIndex].push(cell.getValue());
+        });
+      });
       // for checking rows
-      for (let i = 0; i < row; i++) {
-        const firstToken = board[i][0];
-        const secondToken = board[i][1];
-        const thirdToken = board[i][2];
+      for (let i = 0; i < rows; i++) {
+        const firstToken = boardValues[i][0];
+        const secondToken = boardValues[i][1];
+        const thirdToken = boardValues[i][2];
         if (
           firstToken != "" &&
           firstToken === secondToken &&
           secondToken === thirdToken
         ) {
-          console.log("Win by row!");
+          console.log(`${activePlayer.name} won by row!`);
         }
       }
 
       // for checking columns
       for (let j = 0; j < columns; j++) {
-        const firstToken = board[0][j];
-        const secondToken = board[1][j];
-        const thirdToken = board[2][j];
+        const firstToken = boardValues[0][j];
+        const secondToken = boardValues[1][j];
+        const thirdToken = boardValues[2][j];
         if (
           firstToken != "" &&
           firstToken === secondToken &&
           secondToken === thirdToken
         ) {
-          console.log("Win by column!");
+          console.log(`${activePlayer.name} won by column!`);
         }
       }
 
       // for checking top-left to bottom-right diagonal (DLR - Diagonal Left to Right)
-      const firstTokenDLR = board[0][0];
-      const secondTokenDLR = board[1][1];
-      const thirdTokenDLR = board[2][2];
+      const firstTokenDLR = boardValues[0][0];
+      const secondTokenDLR = boardValues[1][1];
+      const thirdTokenDLR = boardValues[2][2];
       if (
         firstTokenDLR != "" &&
         firstTokenDLR === secondTokenDLR &&
         secondTokenDLR === thirdTokenDLR
       ) {
-        console.log("Win by diagonal Top Left to Bottom Right!");
+        console.log(
+          `${activePlayer.name} won by diagonal Top Left to Bottom Right!`
+        );
       }
 
       // for checking top-left to bottom-right diagonal (RLD -  Right to Left Diagonal)
-      const firstTokenRLD = board[0][2];
-      const secondTokenRLD = board[1][1];
-      const thirdTokenRLD = board[2][0];
+      const firstTokenRLD = boardValues[0][2];
+      const secondTokenRLD = boardValues[1][1];
+      const thirdTokenRLD = boardValues[2][0];
       if (
         firstTokenRLD != "" &&
         firstTokenRLD === secondTokenRLD &&
         secondTokenRLD === thirdTokenRLD
-      ) {
-        console.log("Win by diagonal Top Right to Bottom Left!");
-      }
+      )
+        console.log(
+          `${activePlayer.name} won by diagonal Top Right to Bottom Left!`
+        );
     };
 
-    for (let i = 0; i < rows; i++) {
-      for (let j = 0; j < columns; j++) {
-        if (board[i][j].getValue() !== "") {
-          checkResult();
-        } else {
-          switchPlayerTurn();
-          printNewRound();
-        }
-      }
-    }
-
+    checkResult();
+    switchPlayerTurn();
     printNewRound();
   };
   return {
@@ -163,9 +232,47 @@ function GameController(playerOneName = "Ram", playerTwoName = "Sita") {
   };
 }
 
-const gameboard = GameBoard();
-gameboard.markToken(0, 2, {
-  name: "Manoj",
-  token: "X",
-});
-gameboard.printBoard();
+function ScreenController() {
+  const game = GameController();
+  const playerTurnDiv = document.querySelector(".turn");
+  const boardDiv = document.querySelector(".board");
+
+  const updateScreen = () => {
+    boardDiv.textContent = "";
+    const activePlayer = game.getActivePlayer();
+
+    // Display player's turn
+    playerTurnDiv.textContent = `${activePlayer?.name}'s turn`;
+
+    // Render Board Squares
+    const board = game.getBoard();
+    // console.log({ board });
+    board.forEach((row, rowIndex) =>
+      row.forEach((cell, columnIndex) => {
+        const cellButton = document.createElement("button");
+        cellButton.classList.add("cell");
+        cellButton.dataset.row = rowIndex;
+        cellButton.dataset.column = columnIndex;
+        // console.log(cellButton, row);
+        // console.log("value??", cell?.getValue());
+        cellButton.textContent = cell?.getValue();
+        boardDiv.appendChild(cellButton);
+      })
+    );
+  };
+
+  function clickHandlerBoard(e) {
+    const selectedColumn = e.target.dataset.column;
+    const selectedRow = e.target.dataset.row;
+    if (!selectedColumn || !selectedRow) return;
+    game.playRound(selectedRow, selectedColumn);
+    updateScreen();
+  }
+
+  boardDiv.addEventListener("click", clickHandlerBoard);
+
+  // initial render
+  updateScreen();
+}
+
+ScreenController();
