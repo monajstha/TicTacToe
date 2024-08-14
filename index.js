@@ -194,19 +194,19 @@ function ScreenController() {
   let currentRound = 0;
   const numOfRounds = 3;
 
-  // const playerOneName =
-  //   prompt(`Please enter first player's name`) || "Player 1";
-  // const playerTwoName =
-  //   prompt(`Please enter second player's name`) || "Player 2";
+  const playerOneName =
+    prompt(`Please enter first player's name`) || "Player 1";
+  const playerTwoName =
+    prompt(`Please enter second player's name`) || "Player 2";
 
   const players = [
     {
-      name: "Ram",
+      name: playerOneName,
       token: "O",
       score: 0,
     },
     {
-      name: "Sita",
+      name: playerTwoName,
       token: "X",
       score: 0,
     },
@@ -234,11 +234,8 @@ function ScreenController() {
     playerInfoDiv.append(player1, player2);
   };
 
-  updatePlayerInfo();
-
   const updateScreen = () => {
     console.log("Clearing the board...");
-    boardDiv.textContent = "";
     introContainerDiv.textContent = "";
     const result = game.getResult();
     console.log({ result });
@@ -282,13 +279,14 @@ function ScreenController() {
       console.log("whose turn?");
       playerTurnDiv.textContent = `${activePlayer?.name}'s turn`;
     }
-    console.log("line 281");
+    console.log("line 283");
 
     renderBoard();
   };
 
   const renderBoard = () => {
     // Render Board Squares
+    boardDiv.innerHTML = "";
     const board = game.getBoard();
     console.log({ board });
     board.forEach((row, rowIndex) =>
@@ -333,6 +331,7 @@ function ScreenController() {
   boardDiv.addEventListener("click", clickHandlerBoard);
   // initial render
   updateScreen();
+  updatePlayerInfo();
 }
 
 function playGame() {
