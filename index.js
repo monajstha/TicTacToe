@@ -295,6 +295,8 @@ function ScreenController() {
       // console.log("whose turn?");
       playerTurnDiv.textContent = `${activePlayer?.name}'s turn: ${activePlayer.token}`;
       playerTurnDiv.style.backgroundColor = "yellow";
+      playerTurnDiv.style.color = "black";
+      playerTurnDiv.width = "200px";
       playerTurnDiv.style.padding = "12px";
     }
     renderBoard();
