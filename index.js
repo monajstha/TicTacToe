@@ -1,6 +1,4 @@
-const replayDiv = document.querySelector(".replayDiv");
-const replayButton = document.createElement("button");
-const boardDiv = document.querySelector(".board");
+const numOfRounds = 3;
 
 function GameBoard() {
   const rows = 3;
@@ -23,7 +21,7 @@ function GameBoard() {
   const getBoard = () => board;
 
   const markToken = (row, column, player) => {
-    console.log("inside mark token", board, row, column, player);
+    // console.log("inside mark token", board, row, column, player);
     if (board[row][column].getValue() !== "") {
       alert("Please select an empty box!");
     } else {
@@ -62,28 +60,27 @@ function Cell() {
   };
 }
 
-function GameController(playerOneName = "Ram", playerTwoName = "Sita") {
+function GameController(players) {
   const board = GameBoard();
   const { rows, columns } = board.getRowsAndColumns();
   const boardArr = board.getBoard();
-  console.log("hmmm", boardArr, board.getBoard());
-
-  const players = [
-    {
-      name: playerOneName,
-      token: "O",
-    },
-    {
-      name: playerTwoName,
-      token: "X",
-    },
-  ];
+  // console.log("hmmm", boardArr, board.getBoard());
 
   let activePlayer = players[0];
 
   const switchPlayerTurn = () => {
     activePlayer = activePlayer === players[0] ? players[1] : players[0];
   };
+
+  const increasePlayerWinCount = (playerName) => {
+    players.forEach((player) => {
+      if (player.name === playerName) {
+        player.winCount++;
+      }
+    });
+  };
+
+  const getPlayersInfo = () => players;
 
   const getActivePlayer = () => activePlayer;
 
@@ -102,7 +99,7 @@ function GameController(playerOneName = "Ram", playerTwoName = "Sita") {
         boardValues[rowIndex].push(cell.getValue());
       });
     });
-    console.log({ boardValues });
+    // console.log({ boardValues });
     // for checking rows
     for (let i = 0; i < rows; i++) {
       const firstToken = boardValues[i][0];
@@ -182,47 +179,93 @@ function GameController(playerOneName = "Ram", playerTwoName = "Sita") {
       printNewRound();
     }
   };
+
+  console.log("Active Player", activePlayer);
+
   return {
     playRound,
     getActivePlayer,
     getBoard: board.getBoard,
     getResult,
+    increasePlayerWinCount,
+    getPlayersInfo,
   };
 }
 
 function ScreenController() {
+  let currentRound = 0;
   const introContainerDiv = document.querySelector(".introContainer");
-
-  const playerOneName =
-    prompt(`Please enter first player's name`) || "Player 1";
-  const playerTwoName =
-    prompt(`Please enter second player's name`) || "Player 2";
-  let game = GameController(playerOneName, playerTwoName);
-
+  const replayDiv = document.querySelector(".replayDiv");
+  const replayButton = document.createElement("button");
+  const boardDiv = document.querySelector(".board");
   const playerTurnDiv = document.querySelector(".turn");
 
+  // const playerOneName =
+  //   prompt(`Please enter first player's name`) || "Player 1";
+  // const playerTwoName =
+  //   prompt(`Please enter second player's name`) || "Player 2";
+
+  const players = [
+    {
+      name: "Ram",
+      token: "O",
+      winCount: 0,
+    },
+    {
+      name: "Sita",
+      token: "X",
+      winCount: 0,
+    },
+  ];
+
+  let game = GameController(players);
+
   const updateScreen = () => {
-    introContainerDiv.textContent = "";
+    console.log("Clearing the board...");
     boardDiv.textContent = "";
+    introContainerDiv.textContent = "";
     const result = game.getResult();
-    console.log("result inside screen controller", result);
+    console.log({ result });
     const activePlayer = game.getActivePlayer();
-
+    console.log({ activePlayer });
     if (result) {
-      // Display winner
-      playerTurnDiv.textContent = result;
-      replayDiv.textContent = "Would you like to replay the game?";
+      console.log({ currentRound });
+      currentRound++;
+      if (result !== `It's a draw`) {
+        game.increasePlayerWinCount(activePlayer.name);
+      }
 
-      replayButton.className = "startBtn";
-      replayButton.textContent = "Replay";
-      replayDiv.appendChild(replayButton);
+      if (currentRound < numOfRounds) {
+        console.log("Game Reset...");
+        resetBoard();
+      } else {
+        const players = game.getPlayersInfo();
+        console.log("3 rounds completed", players);
+        const player1 = players[0];
+        const player2 = players[1];
+        // Display winner
+        if (player1.winCount > player2.winCount) {
+          playerTurnDiv.textContent = `${player1.name} Won!`;
+        } else if (player2.winCount > player1.winCount) {
+          playerTurnDiv.textContent = `${player2.name} Won!`;
+        } else {
+          playerTurnDiv.textContent = `It's a draw!`;
+        }
+        replayDiv.textContent = "Would you like to replay the game?";
+
+        replayButton.className = "replayBtn";
+        replayButton.textContent = "Replay";
+        replayDiv.appendChild(replayButton);
+      }
     } else {
       // Display player's turn
       playerTurnDiv.textContent = `${activePlayer?.name}'s turn`;
     }
+    renderBoard(game.getBoard());
+  };
 
+  const renderBoard = (board) => {
     // Render Board Squares
-    const board = game.getBoard();
     board.forEach((row, rowIndex) =>
       row.forEach((cell, columnIndex) => {
         const cellButton = document.createElement("button");
@@ -246,19 +289,26 @@ function ScreenController() {
     updateScreen();
   }
 
-  function resetGame() {
-    // empty reply div and previous board
+  function replay() {
+    // empty reply div
     replayDiv.textContent = "";
-    boardDiv.textContent = "";
+    playGame();
+  }
 
-    // reinitialize the game
-    game = GameController(playerOneName, playerTwoName);
-    // initial render
+  function resetBoard() {
+    game = GameController(players);
     updateScreen();
   }
 
-  replayButton.addEventListener("click", resetGame);
+  replayButton.addEventListener("click", () => {
+    replay();
+  });
+
   boardDiv.addEventListener("click", clickHandlerBoard);
   // initial render
   updateScreen();
+}
+
+function playGame() {
+  ScreenController();
 }

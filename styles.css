@@ -16,7 +16,8 @@ button {
   align-items: center;
 }
 
-.startBtn {
+.startBtn,
+.replayBtn {
   height: 30px;
   width: 90px;
   margin-left: 25px;
