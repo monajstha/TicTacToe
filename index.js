@@ -213,6 +213,8 @@ function ScreenController() {
   ];
 
   const introContainerDiv = document.querySelector(".introContainer");
+  const roundInfo = document.querySelector(".roundInfo");
+  roundInfo.textContent = `Round ${currentRound + 1}`;
 
   const roundWinner = document.querySelector(".roundWinner");
 
@@ -248,6 +250,8 @@ function ScreenController() {
     if (result) {
       // console.log({ currentRound });
       currentRound++;
+      roundInfo.textContent =
+        currentRound >= 2 ? "Final Round" : `Round ${currentRound + 1}`;
       if (result !== `It's a draw!`) {
         roundWinner.textContent = `${result} this round!`;
         game.increasePlayerScore(activePlayer.name);
