@@ -1,5 +1,3 @@
-const numOfRounds = 3;
-
 function GameBoard() {
   const rows = 3;
   const columns = 3;
@@ -72,10 +70,10 @@ function GameController(players) {
     activePlayer = activePlayer === players[0] ? players[1] : players[0];
   };
 
-  const increasePlayerWinCount = (playerName) => {
+  const increasePlayerScore = (playerName) => {
     players.forEach((player) => {
       if (player.name === playerName) {
-        player.winCount++;
+        player.score++;
       }
     });
   };
@@ -187,18 +185,14 @@ function GameController(players) {
     getActivePlayer,
     getBoard: board.getBoard,
     getResult,
-    increasePlayerWinCount,
+    increasePlayerScore,
     getPlayersInfo,
   };
 }
 
 function ScreenController() {
   let currentRound = 0;
-  const introContainerDiv = document.querySelector(".introContainer");
-  const replayDiv = document.querySelector(".replayDiv");
-  const replayButton = document.createElement("button");
-  const boardDiv = document.querySelector(".board");
-  const playerTurnDiv = document.querySelector(".turn");
+  const numOfRounds = 3;
 
   // const playerOneName =
   //   prompt(`Please enter first player's name`) || "Player 1";
@@ -209,16 +203,38 @@ function ScreenController() {
     {
       name: "Ram",
       token: "O",
-      winCount: 0,
+      score: 0,
     },
     {
       name: "Sita",
       token: "X",
-      winCount: 0,
+      score: 0,
     },
   ];
 
+  const introContainerDiv = document.querySelector(".introContainer");
+
+  const replayDiv = document.querySelector(".replayDiv");
+  const replayButton = document.createElement("button");
+  const boardDiv = document.querySelector(".board");
+  const playerTurnDiv = document.querySelector(".turn");
+
+  // initialize the game
   let game = GameController(players);
+
+  const updatePlayerInfo = () => {
+    // Display player's name and initial score
+    const playerInfoDiv = document.querySelector(".playersInfo");
+    const player1 = document.createElement("h4");
+    const player2 = document.createElement("h4");
+    const currentPlayers = game.getPlayersInfo();
+    player1.textContent = `${currentPlayers[0].name}'s Score: ${currentPlayers[0].score}`;
+    player2.textContent = `${currentPlayers[1].name}'s Score: ${currentPlayers[1].score}`;
+    playerInfoDiv.textContent = "";
+    playerInfoDiv.append(player1, player2);
+  };
+
+  updatePlayerInfo();
 
   const updateScreen = () => {
     console.log("Clearing the board...");
@@ -226,27 +242,31 @@ function ScreenController() {
     introContainerDiv.textContent = "";
     const result = game.getResult();
     console.log({ result });
-    const activePlayer = game.getActivePlayer();
+    let activePlayer = game.getActivePlayer();
+
     console.log({ activePlayer });
     if (result) {
-      console.log({ currentRound });
+      // console.log({ currentRound });
       currentRound++;
-      if (result !== `It's a draw`) {
-        game.increasePlayerWinCount(activePlayer.name);
+      if (result !== `It's a draw!`) {
+        game.increasePlayerScore(activePlayer.name);
       }
+      // Update the player's score after result
+      updatePlayerInfo();
 
       if (currentRound < numOfRounds) {
         console.log("Game Reset...");
         resetBoard();
       } else {
-        const players = game.getPlayersInfo();
-        console.log("3 rounds completed", players);
-        const player1 = players[0];
-        const player2 = players[1];
+        console.log("3 rounds completed");
+        const currentPlayers = game.getPlayersInfo();
+
+        const player1 = currentPlayers[0];
+        const player2 = currentPlayers[1];
         // Display winner
-        if (player1.winCount > player2.winCount) {
+        if (player1.score > player2.score) {
           playerTurnDiv.textContent = `${player1.name} Won!`;
-        } else if (player2.winCount > player1.winCount) {
+        } else if (player2.score > player1.score) {
           playerTurnDiv.textContent = `${player2.name} Won!`;
         } else {
           playerTurnDiv.textContent = `It's a draw!`;
@@ -259,13 +279,18 @@ function ScreenController() {
       }
     } else {
       // Display player's turn
+      console.log("whose turn?");
       playerTurnDiv.textContent = `${activePlayer?.name}'s turn`;
     }
-    renderBoard(game.getBoard());
+    console.log("line 281");
+
+    renderBoard();
   };
 
-  const renderBoard = (board) => {
+  const renderBoard = () => {
     // Render Board Squares
+    const board = game.getBoard();
+    console.log({ board });
     board.forEach((row, rowIndex) =>
       row.forEach((cell, columnIndex) => {
         const cellButton = document.createElement("button");
@@ -286,6 +311,7 @@ function ScreenController() {
     const selectedRow = e.target.dataset.row;
     if (!selectedColumn || !selectedRow || result) return;
     game.playRound(selectedRow, selectedColumn);
+    console.log("handlerr");
     updateScreen();
   }
 
