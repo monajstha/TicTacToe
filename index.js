@@ -109,7 +109,7 @@ function GameController(players) {
         secondToken === thirdToken
       ) {
         // console.log(`${activePlayer.name} won by row!`);
-        return `${activePlayer.name} won!`;
+        return `${activePlayer.name} won `;
       }
     }
 
@@ -124,7 +124,7 @@ function GameController(players) {
         secondToken === thirdToken
       ) {
         // console.log(`${activePlayer.name} won by column!`);
-        return `${activePlayer.name} won!`;
+        return `${activePlayer.name} won `;
       }
     }
 
@@ -140,7 +140,7 @@ function GameController(players) {
       // console.log(
       //   `${activePlayer.name} won by diagonal Top Left to Bottom Right!`
       // );
-      return `${activePlayer.name} won!`;
+      return `${activePlayer.name} won `;
     }
 
     // for checking top-left to bottom-right diagonal (RLD -  Right to Left Diagonal)
@@ -155,7 +155,7 @@ function GameController(players) {
       // console.log(
       //   `${activePlayer.name} won by diagonal Top Right to Bottom Left!`
       // );
-      return `${activePlayer.name} won!`;
+      return `${activePlayer.name} won `;
     }
 
     // checking for draw
@@ -214,6 +214,8 @@ function ScreenController() {
 
   const introContainerDiv = document.querySelector(".introContainer");
 
+  const roundWinner = document.querySelector(".roundWinner");
+
   const replayDiv = document.querySelector(".replayDiv");
   const replayButton = document.createElement("button");
   const boardDiv = document.querySelector(".board");
@@ -227,6 +229,7 @@ function ScreenController() {
     const playerInfoDiv = document.querySelector(".playersInfo");
     const player1 = document.createElement("h4");
     const player2 = document.createElement("h4");
+
     const currentPlayers = game.getPlayersInfo();
     player1.textContent = `${currentPlayers[0].name}'s Score: ${currentPlayers[0].score}`;
     player2.textContent = `${currentPlayers[1].name}'s Score: ${currentPlayers[1].score}`;
@@ -246,8 +249,12 @@ function ScreenController() {
       // console.log({ currentRound });
       currentRound++;
       if (result !== `It's a draw!`) {
+        roundWinner.textContent = `${result} this round!`;
         game.increasePlayerScore(activePlayer.name);
+      } else {
+        roundWinner.textContent = "This round was a tie!";
       }
+      roundWinner.style.backgroundColor = "green";
       // Update the player's score after result
       updatePlayerInfo();
 
@@ -257,7 +264,8 @@ function ScreenController() {
       } else {
         console.log("3 rounds completed");
         const currentPlayers = game.getPlayersInfo();
-
+        roundWinner.textContent = "";
+        roundWinner.style.backgroundColor = "white";
         const player1 = currentPlayers[0];
         const player2 = currentPlayers[1];
         // Display winner
@@ -268,6 +276,14 @@ function ScreenController() {
         } else {
           playerTurnDiv.textContent = `It's a draw!`;
         }
+        playerTurnDiv.style.backgroundColor = "green";
+        playerTurnDiv.style.color = "white";
+        playerTurnDiv.style.fontSize = "28px";
+        playerTurnDiv.style.padding = "16px";
+        playerTurnDiv.style.width = "440px";
+        playerTurnDiv.style.borderRadius = "2px";
+        playerTurnDiv.style.display = "flex";
+        playerTurnDiv.style.justifyContent = "center";
         replayDiv.textContent = "Would you like to replay the game?";
 
         replayButton.className = "replayBtn";
@@ -276,11 +292,11 @@ function ScreenController() {
       }
     } else {
       // Display player's turn
-      console.log("whose turn?");
-      playerTurnDiv.textContent = `${activePlayer?.name}'s turn`;
+      // console.log("whose turn?");
+      playerTurnDiv.textContent = `${activePlayer?.name}'s turn: ${activePlayer.token}`;
+      playerTurnDiv.style.backgroundColor = "yellow";
+      playerTurnDiv.style.padding = "12px";
     }
-    console.log("line 283");
-
     renderBoard();
   };
 
@@ -310,6 +326,8 @@ function ScreenController() {
     if (!selectedColumn || !selectedRow || result) return;
     game.playRound(selectedRow, selectedColumn);
     console.log("handlerr");
+    roundWinner.innerHTML = "";
+    roundWinner.style.backgroundColor = "white";
     updateScreen();
   }
 

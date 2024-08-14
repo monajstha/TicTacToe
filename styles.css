@@ -21,6 +21,7 @@ button {
   height: 30px;
   width: 90px;
   margin-left: 25px;
+  z-index: 1000;
 }
 
 .container {
@@ -45,4 +46,16 @@ button {
 
 h3 {
   margin-top: -16px;
+}
+
+.roundWinner {
+  /* background-color: green; */
+  color: white;
+  font-weight: bold;
+  padding: 12px;
+  border-radius: 2px;
+}
+
+p {
+  margin-top: 0;
 }
